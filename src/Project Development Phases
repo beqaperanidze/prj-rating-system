@@ -1,0 +1,16 @@
+## Phase 1: Database Setup
+- Design database schema: 2h
+- Set up PostgreSQL and configure connection: 2h
+- Create entities and repositories: 4h
+- **Total: 8h**
+
+## Phase 2: User Registration and Authentication
+- Implement user registration with email confirmation: 6h
+- Implement login and logout functionality: 4h
+- Implement password reset functionality: 4h
+- **Total: 14h**
+
+## Phase 3: Seller Profile Management
+- Implement Seller profile creation and approval by Admin: 6h
+- Implement Seller profile editing and deletion: 4h
+- **Total: 10h**
