@@ -1,4 +1,4 @@
-package com.prjratingsystem.service;
+package com.prjratingsystem.service.impl;
 
 import com.prjratingsystem.dto.UserDTO;
 import com.prjratingsystem.dto.UserRegistrationDTO;
@@ -7,6 +7,7 @@ import com.prjratingsystem.exception.UserNotFoundException;
 import com.prjratingsystem.model.Role;
 import com.prjratingsystem.model.User;
 import com.prjratingsystem.repository.UserRepository;
+import com.prjratingsystem.service.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
