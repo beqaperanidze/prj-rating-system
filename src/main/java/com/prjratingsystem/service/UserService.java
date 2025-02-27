@@ -7,10 +7,6 @@ import com.prjratingsystem.exception.UserNotFoundException;
 
 import java.util.List;
 
-/**
- * Service interface for managing user-related operations.
- * Provides methods for user registration, retrieval, updates, and deletion.
- */
 public interface UserService {
     /**
      * Registers a new user in the system.
@@ -40,10 +36,10 @@ public interface UserService {
     /**
      * Updates an existing user's information.
      *
-     * @param id The unique identifier of the user to update
+     * @param id                  The unique identifier of the user to update
      * @param userRegistrationDTO The updated user information
      * @return UserDTO containing the updated user information
-     * @throws UserNotFoundException if no user exists with the given id
+     * @throws UserNotFoundException       if no user exists with the given id
      * @throws EmailAlreadyExistsException if attempting to update to an email that is already in use
      */
     UserDTO updateUser(Integer id, UserRegistrationDTO userRegistrationDTO);

@@ -1,11 +1,9 @@
 package com.prjratingsystem.service;
 
 import com.prjratingsystem.dto.CommentDTO;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
 public interface CommentService {
 
     /**
