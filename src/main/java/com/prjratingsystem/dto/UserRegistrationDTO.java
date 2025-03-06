@@ -10,4 +10,5 @@ public class UserRegistrationDTO {
     private String email;
     private String password;
     private Role role;
+    private Boolean approved;
 }

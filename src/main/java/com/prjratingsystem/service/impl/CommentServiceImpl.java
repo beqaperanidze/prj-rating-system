@@ -1,9 +1,12 @@
 package com.prjratingsystem.service.impl;
 
 import com.prjratingsystem.dto.CommentDTO;
+import com.prjratingsystem.dto.CommentWithSellerRequestDTO;
 import com.prjratingsystem.exception.CommentNotFoundException;
+import com.prjratingsystem.exception.UserAlreadyExistException;
 import com.prjratingsystem.exception.UserNotFoundException;
 import com.prjratingsystem.model.Comment;
+import com.prjratingsystem.model.Role;
 import com.prjratingsystem.model.User;
 import com.prjratingsystem.repository.CommentRepository;
 import com.prjratingsystem.repository.UserRepository;
@@ -39,6 +42,33 @@ public class CommentServiceImpl implements CommentService {
         Comment savedComment = commentRepository.save(comment);
         return mapToCommentDTO(savedComment);
     }
+
+    @Override
+    @Transactional
+    public CommentDTO createCommentWithSellerRequest(CommentWithSellerRequestDTO requestDTO)
+            throws UserAlreadyExistException {
+        if (userRepository.existsByEmail(requestDTO.getSellerEmail())) {
+            throw new UserAlreadyExistException("User with this email already exists.");
+        }
+
+        User seller = new User();
+        seller.setFirstName(requestDTO.getSellerFirstName());
+        seller.setLastName(requestDTO.getSellerLastName());
+        seller.setEmail(requestDTO.getSellerEmail());
+        seller.setRole(Role.SELLER);
+        seller.setPassword("TEMP_PASSWORD");
+        seller.setApproved(false);
+        seller = userRepository.save(seller);
+
+        Comment comment = new Comment();
+        comment.setMessage(requestDTO.getMessage());
+        comment.setSellerId(seller);
+        comment.setApproved(false);
+
+        Comment savedComment = commentRepository.save(comment);
+        return mapToCommentDTO(savedComment);
+    }
+
 
     @Override
     public List<CommentDTO> getCommentsBySellerId(Integer sellerId) {

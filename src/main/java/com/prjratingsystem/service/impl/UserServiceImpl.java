@@ -105,6 +105,7 @@ public class UserServiceImpl implements UserService {
         user.setEmail(userRegistrationDTO.getEmail());
         user.setPassword(passwordEncoder.encode(userRegistrationDTO.getPassword()));
         user.setRole(userRegistrationDTO.getRole());
+        user.setApproved(userRegistrationDTO.getApproved());
         return user;
     }
 
@@ -115,6 +116,7 @@ public class UserServiceImpl implements UserService {
         userDTO.setLastName(user.getLastName());
         userDTO.setEmail(user.getEmail());
         userDTO.setRole(user.getRole());
+        userDTO.setApproved(user.getApproved());
         return userDTO;
     }
 }

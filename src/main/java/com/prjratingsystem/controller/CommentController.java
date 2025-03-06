@@ -1,7 +1,9 @@
 package com.prjratingsystem.controller;
 
 import com.prjratingsystem.dto.CommentDTO;
+import com.prjratingsystem.dto.CommentWithSellerRequestDTO;
 import com.prjratingsystem.exception.CommentNotFoundException;
+import com.prjratingsystem.exception.UserAlreadyExistException;
 import com.prjratingsystem.exception.UserNotFoundException;
 import com.prjratingsystem.service.CommentService;
 import org.springframework.http.HttpStatus;
@@ -20,10 +22,16 @@ public class CommentController {
         this.commentService = commentService;
     }
 
-    @PostMapping("/sellers/{sellerId}/comments")
+    @PostMapping("/sellers/{sellerId}")
     @ResponseStatus(HttpStatus.CREATED)
     public CommentDTO createComment(@PathVariable Integer sellerId, @RequestBody CommentDTO commentDTO) {
         return commentService.createComment(sellerId, commentDTO);
+    }
+
+    @PostMapping("/sellers")
+    @ResponseStatus(HttpStatus.CREATED)
+    public CommentDTO createCommentWithSellerRequest(@RequestBody CommentWithSellerRequestDTO requestDTO) throws UserAlreadyExistException {
+        return commentService.createCommentWithSellerRequest(requestDTO);
     }
 
     @GetMapping("/sellers/{sellerId}/comments")

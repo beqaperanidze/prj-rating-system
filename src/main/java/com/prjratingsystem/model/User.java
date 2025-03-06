@@ -27,4 +27,7 @@ public class User {
 
     @Column(nullable = false)
     private Role role;
+
+    @Column(nullable = false)
+    private Boolean approved = false;
 }

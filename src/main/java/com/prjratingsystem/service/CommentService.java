@@ -1,6 +1,8 @@
 package com.prjratingsystem.service;
 
 import com.prjratingsystem.dto.CommentDTO;
+import com.prjratingsystem.dto.CommentWithSellerRequestDTO;
+import com.prjratingsystem.exception.UserAlreadyExistException;
 
 import java.util.List;
 
@@ -14,6 +16,16 @@ public interface CommentService {
      * @return The created comment
      */
     CommentDTO createComment(Integer sellerId, CommentDTO commentDTO);
+
+
+    /**
+     * Creates a new comment with seller request details.
+     *
+     * @param requestDTO The request details containing seller and comment information
+     * @return The created comment
+     */
+    CommentDTO createCommentWithSellerRequest(CommentWithSellerRequestDTO requestDTO) throws UserAlreadyExistException;
+
 
     /**
      * Retrieves all comments for a specific seller.
