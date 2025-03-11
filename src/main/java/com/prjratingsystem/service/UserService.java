@@ -77,4 +77,20 @@ public interface UserService {
      */
     User findByEmail(String email);
 
+    /**
+     * Confirms a user based on the provided confirmation code.
+     *
+     * @param confirmationCode The code used to confirm the user
+     */
+    void confirmUser(String confirmationCode);
+
+    /**
+     * Changes the password for a user.
+     *
+     * @param userId      The unique identifier of the user
+     * @param oldPassword The current password of the user
+     * @param newPassword The new password to set for the user
+     */
+    void changePassword(Integer userId, String oldPassword, String newPassword);
+
 }

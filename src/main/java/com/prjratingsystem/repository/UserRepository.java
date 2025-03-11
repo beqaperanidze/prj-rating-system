@@ -1,5 +1,6 @@
 package com.prjratingsystem.repository;
 
+import com.prjratingsystem.model.GameObject;
 import com.prjratingsystem.model.Role;
 import com.prjratingsystem.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,4 +18,5 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     List<User> findByRoleAndApprovedFalse(Role role);
 
     Optional<User> findByEmail(String email);
+
 }

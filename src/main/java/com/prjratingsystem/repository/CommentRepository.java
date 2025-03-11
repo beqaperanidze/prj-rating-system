@@ -10,5 +10,7 @@ import java.util.List;
 
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Integer> {
-    List<Comment> findBySellerId(User seller);
+    List<Comment> findBySellerId(User user);
+
+    void deleteAllBySellerId(User seller);
 }
