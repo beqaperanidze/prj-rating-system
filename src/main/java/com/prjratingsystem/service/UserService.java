@@ -15,7 +15,7 @@ public interface UserService {
      * @param user The user entity to register
      * @return The registered user entity
      */
-    User registerUser(User user);
+    String registerUser(User user);
 
     /**
      * Finds a user by their unique identifier.

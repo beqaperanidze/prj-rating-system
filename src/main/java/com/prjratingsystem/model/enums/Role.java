@@ -1,4 +1,4 @@
-package com.prjratingsystem.model;
+package com.prjratingsystem.model.enums;
 
 public enum Role {
     ADMIN,

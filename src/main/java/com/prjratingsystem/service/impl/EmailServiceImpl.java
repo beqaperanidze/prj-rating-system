@@ -12,11 +12,8 @@ public class EmailServiceImpl implements EmailService {
 
     private final JavaMailSender mailSender;
 
-    @Value("beqaperanidzee@gmail.com")
+    @Value("beqaperanidze28@gmail.com")
     private String fromEmail;
-
-    @Value("${app.frontend.url}")
-    private String frontendUrl;
 
     @Autowired
     public EmailServiceImpl(JavaMailSender mailSender) {
@@ -34,13 +31,17 @@ public class EmailServiceImpl implements EmailService {
         mailSender.send(message);
     }
 
+
     @Override
     public void sendSellerRegistrationEmail(String to, String confirmationCode) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(fromEmail);
         message.setTo(to);
         message.setSubject("Confirm Your Seller Registration");
-        message.setText("Please click the following link to confirm your registration:\n\n%s/confirm?code=%s".formatted(frontendUrl, confirmationCode));
+
+        String confirmationLink = "http://localhost:8080/api/auth/confirm?code=%s".formatted(confirmationCode);
+
+        message.setText("Please click the following link to confirm your registration:\n\n%s".formatted(confirmationLink));
 
         mailSender.send(message);
     }

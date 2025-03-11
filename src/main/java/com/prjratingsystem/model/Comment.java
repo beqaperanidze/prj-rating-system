@@ -20,8 +20,8 @@ public class Comment {
     private String message;
 
     @ManyToOne
-    @JoinColumn(name = "seller_id", nullable = false)
-    private User sellerId;
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)

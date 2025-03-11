@@ -1,5 +1,6 @@
 package com.prjratingsystem.model;
 
+import com.prjratingsystem.model.enums.Role;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;

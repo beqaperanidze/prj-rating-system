@@ -1,7 +1,6 @@
 package com.prjratingsystem.repository;
 
-import com.prjratingsystem.model.GameObject;
-import com.prjratingsystem.model.Role;
+import com.prjratingsystem.model.enums.Role;
 import com.prjratingsystem.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
