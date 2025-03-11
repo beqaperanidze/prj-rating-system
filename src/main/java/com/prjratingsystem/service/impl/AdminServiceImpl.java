@@ -6,6 +6,7 @@ import com.prjratingsystem.model.enums.Role;
 import com.prjratingsystem.model.User;
 import com.prjratingsystem.repository.UserRepository;
 import com.prjratingsystem.service.AdminService;
+import com.prjratingsystem.service.RatingService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,16 +17,23 @@ import java.util.stream.Collectors;
 public class AdminServiceImpl implements AdminService {
 
     private final UserRepository userRepository;
+    private final RatingService ratingService;
 
-    public AdminServiceImpl(UserRepository userRepository) {
+    public AdminServiceImpl(UserRepository userRepository, RatingService ratingService) {
         this.userRepository = userRepository;
+        this.ratingService = ratingService;
     }
 
-    @Override
     public List<UserDTO> getPendingSellers() {
-        return userRepository.findByRoleAndApprovedFalse(Role.SELLER).stream().map(this::mapToUserDTO).collect(Collectors.toList());
+        List<User> pendingSellers = userRepository.findByApprovedFalseAndRole(Role.SELLER);
+        return pendingSellers.stream()
+                .map(user -> {
+                    UserDTO dto = new UserDTO();
+                    dto.setAverageRating(ratingService.calculateSellerRating(user.getId()));
+                    return dto;
+                })
+                .collect(Collectors.toList());
     }
-
     @Override
     @Transactional
     public void approveSeller(Integer sellerId) {

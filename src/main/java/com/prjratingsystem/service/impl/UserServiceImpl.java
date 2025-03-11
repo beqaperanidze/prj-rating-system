@@ -10,6 +10,7 @@ import com.prjratingsystem.repository.CommentRepository;
 import com.prjratingsystem.repository.GameObjectRepository;
 import com.prjratingsystem.repository.UserRepository;
 import com.prjratingsystem.service.GameObjectService;
+import com.prjratingsystem.service.RatingService;
 import com.prjratingsystem.service.UserService;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,14 +27,16 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
     private final GameObjectService gameObjectService;
+    private final RatingService ratingService;
     private final PasswordEncoder passwordEncoder;
     private final RedisTemplate<String, String> redisTemplate;
     private final GameObjectRepository gameObjectRepository;
 
-    public UserServiceImpl(UserRepository userRepository, CommentRepository commentRepository, GameObjectService gameObjectService, PasswordEncoder passwordEncoder, RedisTemplate<String, String> redisTemplate, GameObjectRepository gameObjectRepository) {
+    public UserServiceImpl(UserRepository userRepository, CommentRepository commentRepository, GameObjectService gameObjectService, RatingService ratingService, PasswordEncoder passwordEncoder, RedisTemplate<String, String> redisTemplate, GameObjectRepository gameObjectRepository) {
         this.userRepository = userRepository;
         this.commentRepository = commentRepository;
         this.gameObjectService = gameObjectService;
+        this.ratingService = ratingService;
         this.passwordEncoder = passwordEncoder;
         this.redisTemplate = redisTemplate;
         this.gameObjectRepository = gameObjectRepository;
@@ -87,7 +90,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDTO findUserById(Integer id) {
         User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User not found with ID: %d".formatted(id)));
-        return mapToUserDTO(user);
+        UserDTO userDTO = mapToUserDTO(user);
+        if (user.getRole() == Role.SELLER) {
+            userDTO.setAverageRating(ratingService.calculateSellerRating(user.getId()));
+        }
+
+        return userDTO;
     }
 
     @Override
