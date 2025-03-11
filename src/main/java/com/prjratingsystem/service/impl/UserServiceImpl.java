@@ -4,7 +4,7 @@ import com.prjratingsystem.dto.UserDTO;
 import com.prjratingsystem.dto.UserRegistrationDTO;
 import com.prjratingsystem.exception.EmailAlreadyExistsException;
 import com.prjratingsystem.exception.UserNotFoundException;
-import com.prjratingsystem.model.Role;
+import com.prjratingsystem.model.enums.Role;
 import com.prjratingsystem.model.User;
 import com.prjratingsystem.repository.CommentRepository;
 import com.prjratingsystem.repository.GameObjectRepository;
@@ -41,16 +41,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public User registerUser(User user) {
+    public String registerUser(User user) {
         String encodedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword);
-
         user.setRole(Role.SELLER);
         user.setApproved(false);
-        String confirmationCode = UUID.randomUUID().toString();
-        redisTemplate.opsForValue().set(user.getEmail(), confirmationCode, Duration.ofHours(24));
 
-        return userRepository.save(user);
+        String confirmationCode = UUID.randomUUID().toString();
+        redisTemplate.opsForValue().set(confirmationCode, user.getEmail(), Duration.ofHours(24));
+
+        userRepository.save(user);
+        return confirmationCode;
     }
 
     @Override
@@ -61,6 +62,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void confirmUser(String confirmationCode) {
         String email = redisTemplate.opsForValue().get(confirmationCode);
+
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("User not found with email: %s".formatted(email)));
         user.setApproved(true);
@@ -126,7 +128,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void deleteUser(Integer id) {
         User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User not found with ID: %d".formatted(id)));
-        commentRepository.deleteAllBySellerId(user);
+        commentRepository.deleteAllByUserId(id);
         gameObjectRepository.deleteAllByUserId(id);
         userRepository.delete(user);
     }

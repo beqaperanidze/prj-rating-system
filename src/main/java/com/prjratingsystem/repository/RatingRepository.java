@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface RatingRepository extends JpaRepository<Rating, Integer> {
-    List<Rating> findByComment_SellerId_Id(Integer sellerId);
+    List<Rating> findByComment_User_Id(Integer sellerId);
 }

@@ -39,7 +39,7 @@ public class RatingServiceImpl implements RatingService {
 
     @Override
     public Double calculateSellerRating(Integer sellerId) {
-        List<Rating> ratings = ratingRepository.findByComment_SellerId_Id(sellerId);
+        List<Rating> ratings = ratingRepository.findByComment_User_Id(sellerId);
 
         if (ratings.isEmpty()) {
             return 0.0;

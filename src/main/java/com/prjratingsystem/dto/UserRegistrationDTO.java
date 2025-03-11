@@ -1,6 +1,6 @@
 package com.prjratingsystem.dto;
 
-import com.prjratingsystem.model.Role;
+import com.prjratingsystem.model.enums.Role;
 import lombok.Data;
 
 @Data

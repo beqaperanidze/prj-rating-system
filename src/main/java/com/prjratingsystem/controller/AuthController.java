@@ -28,11 +28,11 @@ public class AuthController {
         if (userService.findByEmail(user.getEmail()) != null) {
             return ResponseEntity.badRequest().body("Email already exists");
         }
-        userService.registerUser(user);
 
-        emailService.sendSellerRegistrationEmail(user.getEmail(), redisTemplate.opsForValue().get(user.getEmail()));
+        String confirmationCode = userService.registerUser(user);
+        emailService.sendSellerRegistrationEmail(user.getEmail(), confirmationCode);
 
-        return ResponseEntity.ok("User registered successfully");
+        return ResponseEntity.ok("User registered successfully. Check your email for the confirmation link.");
     }
 
     @GetMapping("/confirm")

@@ -6,7 +6,7 @@ import com.prjratingsystem.exception.CommentNotFoundException;
 import com.prjratingsystem.exception.UserAlreadyExistException;
 import com.prjratingsystem.exception.UserNotFoundException;
 import com.prjratingsystem.model.Comment;
-import com.prjratingsystem.model.Role;
+import com.prjratingsystem.model.enums.Role;
 import com.prjratingsystem.model.User;
 import com.prjratingsystem.repository.CommentRepository;
 import com.prjratingsystem.repository.UserRepository;
@@ -36,7 +36,7 @@ public class CommentServiceImpl implements CommentService {
 
         Comment comment = new Comment();
         comment.setMessage(commentDTO.getMessage());
-        comment.setSellerId(seller);
+        comment.setUser(seller);
         comment.setApproved(false);
 
         Comment savedComment = commentRepository.save(comment);
@@ -62,7 +62,7 @@ public class CommentServiceImpl implements CommentService {
 
         Comment comment = new Comment();
         comment.setMessage(requestDTO.getMessage());
-        comment.setSellerId(seller);
+        comment.setUser(seller);
         comment.setApproved(false);
 
         Comment savedComment = commentRepository.save(comment);
@@ -72,9 +72,9 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public List<CommentDTO> getCommentsBySellerId(Integer sellerId) {
-        User seller = userRepository.findById(sellerId).orElseThrow(() -> new UserNotFoundException("Seller not found with ID: %d".formatted(sellerId)));
+        userRepository.findById(sellerId).orElseThrow(() -> new UserNotFoundException("Seller not found with ID: %d".formatted(sellerId)));
 
-        return commentRepository.findBySellerId(seller).stream()
+        return commentRepository.findByUserId(sellerId).stream()
                 .map(this::mapToCommentDTO)
                 .collect(Collectors.toList());
     }
@@ -124,7 +124,7 @@ public class CommentServiceImpl implements CommentService {
         CommentDTO commentDTO = new CommentDTO();
         commentDTO.setId(comment.getId());
         commentDTO.setMessage(comment.getMessage());
-        commentDTO.setSellerId(comment.getSellerId().getId());
+        commentDTO.setSellerId(comment.getUser().getId());
         commentDTO.setCreatedAt(comment.getCreatedAt());
         commentDTO.setApproved(comment.getApproved());
         return commentDTO;
