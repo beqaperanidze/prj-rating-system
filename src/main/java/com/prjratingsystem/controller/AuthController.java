@@ -35,6 +35,16 @@ public class AuthController {
         return ResponseEntity.ok("User registered successfully. Check your email for the confirmation link.");
     }
 
+    @PutMapping("/{id}/change-password")
+    public ResponseEntity<String> changePassword(
+            @PathVariable Integer id,
+            @RequestParam String oldPassword,
+            @RequestParam String newPassword) {
+
+        userService.changePassword(id, oldPassword, newPassword);
+        return ResponseEntity.ok("Password changed successfully");
+    }
+
     @GetMapping("/confirm")
     public ResponseEntity<String> confirm(@RequestParam String code) {
         userService.confirmUser(code);
