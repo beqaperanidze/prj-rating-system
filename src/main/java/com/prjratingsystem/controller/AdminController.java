@@ -31,6 +31,12 @@ public class AdminController {
         return new ResponseEntity<>(createdRating, HttpStatus.CREATED);
     }
 
+    @GetMapping("/sellers/{sellerId}/average-rating")
+    public ResponseEntity<Double> getSellerAverageRating(@PathVariable Integer sellerId) {
+        Double averageRating = ratingService.calculateSellerRating(sellerId);
+        return ResponseEntity.ok(averageRating);
+    }
+
     @PatchMapping("/comments/{commentId}/approve")
     public ResponseEntity<Void> approveComment(
             @PathVariable Integer commentId,
