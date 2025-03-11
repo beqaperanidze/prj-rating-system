@@ -3,7 +3,6 @@ package com.prjratingsystem.controller;
 import com.prjratingsystem.dto.UserDTO;
 import com.prjratingsystem.dto.UserRegistrationDTO;
 import com.prjratingsystem.service.UserService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,12 +15,6 @@ public class UserController {
 
     public UserController(UserService userService) {
         this.userService = userService;
-    }
-
-    @PostMapping("/register")
-    public ResponseEntity<UserDTO> register(@RequestBody UserRegistrationDTO userRegistrationDTO) {
-        UserDTO registeredUser = userService.registerUser(userRegistrationDTO);
-        return new ResponseEntity<>(registeredUser, HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")

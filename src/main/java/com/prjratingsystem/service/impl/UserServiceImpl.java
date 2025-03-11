@@ -28,16 +28,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserDTO registerUser(UserRegistrationDTO userRegistrationDTO) {
-        if (existsByEmail(userRegistrationDTO.getEmail())) {
-            throw new EmailAlreadyExistsException("Email is already registered");
-        }
+    public User registerUser(User user) {
+        String encodedPassword = passwordEncoder.encode(user.getPassword());
+        user.setPassword(encodedPassword);
+        return userRepository.save(user);
+    }
 
-        User user = populateUserFromDTO(userRegistrationDTO);
-
-        User savedUser = userRepository.save(user);
-
-        return mapToUserDTO(savedUser);
+    @Override
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email).orElse(null);
     }
 
     @Override

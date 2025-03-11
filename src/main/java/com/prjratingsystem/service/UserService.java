@@ -4,6 +4,7 @@ import com.prjratingsystem.dto.UserDTO;
 import com.prjratingsystem.dto.UserRegistrationDTO;
 import com.prjratingsystem.exception.EmailAlreadyExistsException;
 import com.prjratingsystem.exception.UserNotFoundException;
+import com.prjratingsystem.model.User;
 
 import java.util.List;
 
@@ -11,11 +12,10 @@ public interface UserService {
     /**
      * Registers a new user in the system.
      *
-     * @param userRegistrationDTO The registration data for the new user
-     * @return UserDTO containing the registered user's information
-     * @throws EmailAlreadyExistsException if the email is already registered
+     * @param user The user entity to register
+     * @return The registered user entity
      */
-    UserDTO registerUser(UserRegistrationDTO userRegistrationDTO);
+    User registerUser(User user);
 
     /**
      * Finds a user by their unique identifier.
@@ -67,4 +67,14 @@ public interface UserService {
      * @return true if the email exists, false otherwise
      */
     boolean existsByEmail(String email);
+
+
+    /**
+     * Finds a user by their email address.
+     *
+     * @param email The email address to search for
+     * @return The user entity with the given email
+     */
+    User findByEmail(String email);
+
 }
