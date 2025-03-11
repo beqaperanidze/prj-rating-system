@@ -14,6 +14,8 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
+
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authz -> authz
@@ -24,8 +26,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/comments/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/comments/sellers/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/comments/sellers").permitAll()
-                        .requestMatchers("/swagger-ui/index.html").permitAll()
-
+                        .requestMatchers("/swagger-ui/**").permitAll()
+                        .requestMatchers("/v3/api-docs/**").permitAll()
 
                         .requestMatchers(HttpMethod.PUT, "/api/comments/**").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/api/comments/**").authenticated()
@@ -37,24 +39,22 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/api/users/**").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/api/users/**").authenticated()
 
-
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
 
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginProcessingUrl("/api/auth/login")
-                        .defaultSuccessUrl("/swagger-ui/index.html", true)
+                        .defaultSuccessUrl("/api/", true)
                         .permitAll()
                 )
                 .logout(logout -> logout
                         .logoutUrl("/api/auth/logout")
-                        .logoutSuccessUrl("/login")
+                        .logoutSuccessUrl("/api/login")
                         .permitAll()
                 );
 
         return http.build();
-
 
 //        http
 //                .csrf(AbstractHttpConfigurer::disable)
