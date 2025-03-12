@@ -24,16 +24,18 @@ public class AdminServiceImpl implements AdminService {
         this.ratingService = ratingService;
     }
 
+    @Override
     public List<UserDTO> getPendingSellers() {
         List<User> pendingSellers = userRepository.findByApprovedFalseAndRole(Role.SELLER);
         return pendingSellers.stream()
                 .map(user -> {
-                    UserDTO dto = new UserDTO();
+                    UserDTO dto = mapToUserDTO(user);
                     dto.setAverageRating(ratingService.calculateSellerRating(user.getId()));
                     return dto;
                 })
                 .collect(Collectors.toList());
     }
+
     @Override
     @Transactional
     public void approveSeller(Integer sellerId) {
