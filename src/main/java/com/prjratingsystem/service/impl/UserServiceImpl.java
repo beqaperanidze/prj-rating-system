@@ -12,12 +12,16 @@ import com.prjratingsystem.repository.UserRepository;
 import com.prjratingsystem.service.GameObjectService;
 import com.prjratingsystem.service.RatingService;
 import com.prjratingsystem.service.UserService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -150,6 +154,23 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
+    }
+
+    @Override
+    public List<UserDTO> getTopSellers(Pageable pageable) {
+        Page<User> sellerPage = userRepository.findByRole(Role.SELLER, pageable);
+        List<User> sellers = sellerPage.getContent();
+        List<UserDTO> sellerDTOs = new ArrayList<>();
+
+        for (User seller : sellers) {
+            UserDTO sellerDTO = mapToUserDTO(seller);
+            sellerDTO.setAverageRating(ratingService.calculateSellerRating(seller.getId()));
+            sellerDTOs.add(sellerDTO);
+        }
+
+        sellerDTOs.sort(Comparator.comparingDouble(UserDTO::getAverageRating).reversed());
+
+        return sellerDTOs;
     }
 
 //    private User populateUserFromDTO(UserRegistrationDTO userRegistrationDTO) {

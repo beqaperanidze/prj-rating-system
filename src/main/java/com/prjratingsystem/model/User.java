@@ -32,11 +32,4 @@ public class User {
     @Column(nullable = false)
     private Boolean approved = false;
 
-    public boolean isApproved() {
-        return approved;
-    }
-
-    public void setApproved(boolean approved) {
-        this.approved = approved;
-    }
 }

@@ -5,6 +5,7 @@ import com.prjratingsystem.dto.UserRegistrationDTO;
 import com.prjratingsystem.exception.EmailAlreadyExistsException;
 import com.prjratingsystem.exception.UserNotFoundException;
 import com.prjratingsystem.model.User;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -93,4 +94,6 @@ public interface UserService {
      */
     void changePassword(Integer userId, String oldPassword, String newPassword);
 
+
+    List<UserDTO> getTopSellers(Pageable pageable);
 }

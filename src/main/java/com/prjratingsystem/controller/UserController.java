@@ -3,6 +3,8 @@ package com.prjratingsystem.controller;
 import com.prjratingsystem.dto.UserDTO;
 import com.prjratingsystem.dto.UserRegistrationDTO;
 import com.prjratingsystem.service.UserService;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,6 +35,16 @@ public class UserController {
     public ResponseEntity<List<UserDTO>> getUsersByRole(@PathVariable String role) {
         List<UserDTO> users = userService.findUsersByRole(role);
         return ResponseEntity.ok(users);
+    }
+
+    @GetMapping("/top")
+    public ResponseEntity<List<UserDTO>> getTopSellers(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        List<UserDTO> topSellers = userService.getTopSellers(pageable);
+        return ResponseEntity.ok(topSellers);
     }
 
     @PutMapping("/{id}")
