@@ -45,4 +45,15 @@ public class EmailServiceImpl implements EmailService {
 
         mailSender.send(message);
     }
+
+    @Override
+    public void sendPasswordResetEmail(String to, String resetCode) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(fromEmail);
+        message.setTo(to);
+        message.setSubject("Password Reset Request");
+        message.setText("Your password reset code is: %s\n\nThis code will expire in 30 minutes.".formatted(resetCode));
+
+        mailSender.send(message);
+    }
 }

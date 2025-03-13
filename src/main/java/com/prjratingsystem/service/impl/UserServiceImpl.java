@@ -9,6 +9,7 @@ import com.prjratingsystem.model.User;
 import com.prjratingsystem.repository.CommentRepository;
 import com.prjratingsystem.repository.GameObjectRepository;
 import com.prjratingsystem.repository.UserRepository;
+import com.prjratingsystem.service.EmailService;
 import com.prjratingsystem.service.RatingService;
 import com.prjratingsystem.service.UserService;
 import org.springframework.data.domain.Page;
@@ -33,14 +34,16 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final RedisTemplate<String, String> redisTemplate;
     private final GameObjectRepository gameObjectRepository;
+    private final EmailService emailService;
 
-    public UserServiceImpl(UserRepository userRepository, CommentRepository commentRepository, RatingService ratingService, PasswordEncoder passwordEncoder, RedisTemplate<String, String> redisTemplate, GameObjectRepository gameObjectRepository) {
+    public UserServiceImpl(UserRepository userRepository, CommentRepository commentRepository, RatingService ratingService, PasswordEncoder passwordEncoder, RedisTemplate<String, String> redisTemplate, GameObjectRepository gameObjectRepository, EmailService emailService) {
         this.userRepository = userRepository;
         this.commentRepository = commentRepository;
         this.ratingService = ratingService;
         this.passwordEncoder = passwordEncoder;
         this.redisTemplate = redisTemplate;
         this.gameObjectRepository = gameObjectRepository;
+        this.emailService = emailService;
     }
 
     @Override
@@ -48,7 +51,7 @@ public class UserServiceImpl implements UserService {
     public String registerUser(User user) {
         String encodedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword);
-        user.setRole(Role.ADMIN);
+        user.setRole(Role.SELLER);
         user.setApproved(false);
 
         String confirmationCode = UUID.randomUUID().toString();
@@ -72,6 +75,7 @@ public class UserServiceImpl implements UserService {
         user.setApproved(true);
         userRepository.save(user);
         redisTemplate.delete(confirmationCode);
+        emailService.sendSellerApprovedEmail(user.getEmail());
     }
 
     @Override
