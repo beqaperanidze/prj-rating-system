@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface RatingRepository extends JpaRepository<Rating, Integer> {
     List<Rating> findByComment_User_Id(Integer sellerId);
+
+     void deleteAllByCommentUserId(Integer id);
 }

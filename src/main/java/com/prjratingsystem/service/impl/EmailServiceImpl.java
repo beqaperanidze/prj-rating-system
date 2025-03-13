@@ -12,7 +12,7 @@ public class EmailServiceImpl implements EmailService {
 
     private final JavaMailSender mailSender;
 
-    @Value("beqaperanidze28@gmail.com")
+    @Value("bekasratingsystem@gmail.com")
     private String fromEmail;
 
     @Autowired

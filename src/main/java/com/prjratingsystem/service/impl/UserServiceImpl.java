@@ -8,6 +8,7 @@ import com.prjratingsystem.model.enums.Role;
 import com.prjratingsystem.model.User;
 import com.prjratingsystem.repository.CommentRepository;
 import com.prjratingsystem.repository.GameObjectRepository;
+import com.prjratingsystem.repository.RatingRepository;
 import com.prjratingsystem.repository.UserRepository;
 import com.prjratingsystem.service.EmailService;
 import com.prjratingsystem.service.RatingService;
@@ -30,15 +31,17 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
+    private final GameObjectRepository gameObjectRepository;
+    private final RatingRepository ratingRepository;
     private final RatingService ratingService;
     private final PasswordEncoder passwordEncoder;
     private final RedisTemplate<String, String> redisTemplate;
-    private final GameObjectRepository gameObjectRepository;
     private final EmailService emailService;
 
-    public UserServiceImpl(UserRepository userRepository, CommentRepository commentRepository, RatingService ratingService, PasswordEncoder passwordEncoder, RedisTemplate<String, String> redisTemplate, GameObjectRepository gameObjectRepository, EmailService emailService) {
+    public UserServiceImpl(UserRepository userRepository, CommentRepository commentRepository, RatingRepository ratingRepository, RatingService ratingService, PasswordEncoder passwordEncoder, RedisTemplate<String, String> redisTemplate, GameObjectRepository gameObjectRepository, EmailService emailService) {
         this.userRepository = userRepository;
         this.commentRepository = commentRepository;
+        this.ratingRepository = ratingRepository;
         this.ratingService = ratingService;
         this.passwordEncoder = passwordEncoder;
         this.redisTemplate = redisTemplate;
@@ -140,9 +143,12 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void deleteUser(Integer id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User not found with ID: %d".formatted(id)));
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("User not found with ID: %d".formatted(id)));
+        ratingRepository.deleteAllByCommentUserId(id);
         commentRepository.deleteAllByUserId(id);
         gameObjectRepository.deleteAllByUserId(id);
+
         userRepository.delete(user);
     }
 
