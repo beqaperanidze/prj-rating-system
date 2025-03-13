@@ -24,7 +24,6 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/comments/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/comments/sellers/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/comments/sellers").permitAll()
-                        .requestMatchers("/swagger-ui/**").permitAll()
 
                         .requestMatchers(HttpMethod.PUT, "/api/comments/**").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/api/comments/**").authenticated()
@@ -35,6 +34,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/game-objects/user/**").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/api/users/**").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/api/users/**").authenticated()
+                        .requestMatchers("/swagger-ui/**").authenticated()
                         .requestMatchers("/v3/api-docs/**").authenticated()
 
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")

@@ -1,6 +1,8 @@
 package com.prjratingsystem.controller;
 
 import com.prjratingsystem.dto.GameObjectDTO;
+import com.prjratingsystem.exception.GameObjectNotFoundException;
+import com.prjratingsystem.exception.UnauthorizedAccessException;
 import com.prjratingsystem.service.GameObjectService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -53,4 +55,15 @@ public class GameObjectController {
         List<GameObjectDTO> gameObjects = gameObjectService.getGameObjectsByUserId(userId);
         return ResponseEntity.ok(gameObjects);
     }
+
+    @ExceptionHandler(GameObjectNotFoundException.class)
+    public ResponseEntity<String> handleGameObjectNotFoundException(GameObjectNotFoundException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(UnauthorizedAccessException.class)
+    public ResponseEntity<String> handleUnauthorizedAccessException(UnauthorizedAccessException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.FORBIDDEN);
+    }
+
 }

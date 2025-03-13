@@ -3,7 +3,7 @@ package com.prjratingsystem.service.impl;
 import com.prjratingsystem.dto.CommentDTO;
 import com.prjratingsystem.dto.CommentWithSellerRequestDTO;
 import com.prjratingsystem.exception.CommentNotFoundException;
-import com.prjratingsystem.exception.UserAlreadyExistException;
+import com.prjratingsystem.exception.UserAlreadyExistsException;
 import com.prjratingsystem.exception.UserNotFoundException;
 import com.prjratingsystem.model.Comment;
 import com.prjratingsystem.model.enums.Role;
@@ -46,9 +46,9 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public CommentDTO createCommentWithSellerRequest(CommentWithSellerRequestDTO requestDTO)
-            throws UserAlreadyExistException {
+            throws UserAlreadyExistsException {
         if (userRepository.existsByEmail(requestDTO.getSellerEmail())) {
-            throw new UserAlreadyExistException("User with this email already exists.");
+            throw new UserAlreadyExistsException("User with this email already exists.");
         }
 
         User seller = new User();

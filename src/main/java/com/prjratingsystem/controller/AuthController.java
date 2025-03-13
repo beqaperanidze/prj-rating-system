@@ -2,14 +2,19 @@ package com.prjratingsystem.controller;
 
 import java.util.Map;
 
+import com.prjratingsystem.exception.UserAlreadyExistsException;
+import com.prjratingsystem.exception.UserNotFoundException;
 import com.prjratingsystem.model.User;
 import com.prjratingsystem.service.EmailService;
 import com.prjratingsystem.service.PasswordResetService;
 import com.prjratingsystem.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.prjratingsystem.exception.EmailAlreadyExistsException;
+import com.prjratingsystem.exception.UnauthorizedAccessException;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -99,5 +104,25 @@ public class AuthController {
         } else {
             return ResponseEntity.badRequest().body(Map.of("error", "Invalid or expired reset code"));
         }
+    }
+
+    @ExceptionHandler(EmailAlreadyExistsException.class)
+    public ResponseEntity<String> handleEmailAlreadyExistsException(EmailAlreadyExistsException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(UserAlreadyExistsException.class)
+    public ResponseEntity<String> handleUserAlreadyExistsException(UserAlreadyExistsException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<String> handleUserNotFoundException(UserNotFoundException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(UnauthorizedAccessException.class)
+    public ResponseEntity<String> handleUnauthorizedAccessException(UnauthorizedAccessException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.UNAUTHORIZED);
     }
 }
