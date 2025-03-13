@@ -23,4 +23,16 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     List<User> findByApprovedFalseAndRole(Role role);
 
     Page<User> findByRole(Role role, Pageable pageable);
+
+    @Query("SELECT DISTINCT u FROM User u " +
+            "LEFT JOIN GameObject g ON g.user.id = u.id " +
+            "WHERE u.role = 'SELLER' " +
+            "AND (:gameTitle IS NULL OR g.title = :gameTitle) " +
+            "AND (:minRating IS NULL OR :maxRating IS NULL OR " +
+            "(COALESCE((SELECT AVG(r.ratingValue) FROM Rating r WHERE r.comment.user.id = u.id), 0) BETWEEN :minRating AND :maxRating))")
+    List<User> findSellersByGameAndRating(@Param("gameTitle") String gameTitle,
+                                          @Param("minRating") Double minRating,
+                                          @Param("maxRating") Double maxRating);
+
+
 }

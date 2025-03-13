@@ -47,6 +47,16 @@ public class UserController {
         return ResponseEntity.ok(topSellers);
     }
 
+    @GetMapping("/sellers/filter")
+    public ResponseEntity<List<UserDTO>> filterSellers(
+            @RequestParam(required = false) String gameTitle,
+            @RequestParam(required = false) Double minRating,
+            @RequestParam(required = false) Double maxRating) {
+        List<UserDTO> filteredSellers = userService.filterSellers(gameTitle, minRating, maxRating);
+        return ResponseEntity.ok(filteredSellers);
+    }
+
+
     @PutMapping("/{id}")
     public ResponseEntity<UserDTO> updateUser(@PathVariable Integer id,
                                               @RequestBody UserRegistrationDTO userRegistrationDTO) {

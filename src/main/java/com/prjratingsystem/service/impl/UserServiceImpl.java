@@ -9,7 +9,6 @@ import com.prjratingsystem.model.User;
 import com.prjratingsystem.repository.CommentRepository;
 import com.prjratingsystem.repository.GameObjectRepository;
 import com.prjratingsystem.repository.UserRepository;
-import com.prjratingsystem.service.GameObjectService;
 import com.prjratingsystem.service.RatingService;
 import com.prjratingsystem.service.UserService;
 import org.springframework.data.domain.Page;
@@ -30,16 +29,14 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
-    private final GameObjectService gameObjectService;
     private final RatingService ratingService;
     private final PasswordEncoder passwordEncoder;
     private final RedisTemplate<String, String> redisTemplate;
     private final GameObjectRepository gameObjectRepository;
 
-    public UserServiceImpl(UserRepository userRepository, CommentRepository commentRepository, GameObjectService gameObjectService, RatingService ratingService, PasswordEncoder passwordEncoder, RedisTemplate<String, String> redisTemplate, GameObjectRepository gameObjectRepository) {
+    public UserServiceImpl(UserRepository userRepository, CommentRepository commentRepository, RatingService ratingService, PasswordEncoder passwordEncoder, RedisTemplate<String, String> redisTemplate, GameObjectRepository gameObjectRepository) {
         this.userRepository = userRepository;
         this.commentRepository = commentRepository;
-        this.gameObjectService = gameObjectService;
         this.ratingService = ratingService;
         this.passwordEncoder = passwordEncoder;
         this.redisTemplate = redisTemplate;
@@ -51,7 +48,7 @@ public class UserServiceImpl implements UserService {
     public String registerUser(User user) {
         String encodedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword);
-        user.setRole(Role.SELLER);
+        user.setRole(Role.ADMIN);
         user.setApproved(false);
 
         String confirmationCode = UUID.randomUUID().toString();
@@ -173,17 +170,30 @@ public class UserServiceImpl implements UserService {
         return sellerDTOs;
     }
 
-//    private User populateUserFromDTO(UserRegistrationDTO userRegistrationDTO) {
-//        User user = new User();
-//        user.setFirstName(userRegistrationDTO.getFirstName());
-//        user.setLastName(userRegistrationDTO.getLastName());
-//        user.setEmail(userRegistrationDTO.getEmail());
-//        user.setPassword(passwordEncoder.encode(userRegistrationDTO.getPassword()));
-//        user.setRole(userRegistrationDTO.getRole());
-//        user.setApproved(userRegistrationDTO.getApproved());
-//        return user;
-//    }
+    @Override
+    public List<UserDTO> filterSellers(String gameTitle, Double minRating, Double maxRating) {
+        List<User> sellers = userRepository.findSellersByGameAndRating(gameTitle, minRating, maxRating);
+        return sellers.stream()
+                .map(user -> {
+                    UserDTO dto = mapToUserDTO(user);
+                    dto.setAverageRating(ratingService.calculateSellerRating(user.getId()));
+                    return dto;
+                })
+                .collect(Collectors.toList());
+    }
 
+    /*
+    private User populateUserFromDTO(UserRegistrationDTO userRegistrationDTO) {
+            User user = new User();
+            user.setFirstName(userRegistrationDTO.getFirstName());
+            user.setLastName(userRegistrationDTO.getLastName());
+            user.setEmail(userRegistrationDTO.getEmail());
+            user.setPassword(passwordEncoder.encode(userRegistrationDTO.getPassword()));
+            user.setRole(userRegistrationDTO.getRole());
+            user.setApproved(userRegistrationDTO.getApproved());
+            return user;
+        }
+    */
     private UserDTO mapToUserDTO(User user) {
         UserDTO userDTO = new UserDTO();
         userDTO.setId(user.getId());

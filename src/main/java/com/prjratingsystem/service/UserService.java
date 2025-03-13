@@ -95,5 +95,21 @@ public interface UserService {
     void changePassword(Integer userId, String oldPassword, String newPassword);
 
 
+    /**
+     * Retrieves the top sellers based on a pageable request.
+     *
+     * @param pageable The pagination information
+     * @return List of UserDTO objects representing the top sellers
+     */
     List<UserDTO> getTopSellers(Pageable pageable);
+
+    /**
+     * Filters sellers based on game title and rating range.
+     *
+     * @param gameTitle The title of the game to filter sellers by
+     * @param minRating The minimum rating to filter sellers by
+     * @param maxRating The maximum rating to filter sellers by
+     * @return List of UserDTO objects representing the filtered sellers
+     */
+    List<UserDTO> filterSellers(String gameTitle, Double minRating, Double maxRating);
 }

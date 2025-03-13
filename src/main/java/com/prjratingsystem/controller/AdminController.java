@@ -1,11 +1,9 @@
 package com.prjratingsystem.controller;
 
-import com.prjratingsystem.dto.RatingDTO;
 import com.prjratingsystem.dto.UserDTO;
+import com.prjratingsystem.dto.CommentDTO;
 import com.prjratingsystem.service.AdminService;
-import com.prjratingsystem.service.CommentService;
 import com.prjratingsystem.service.RatingService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,19 +14,11 @@ import java.util.List;
 public class AdminController {
 
     private final RatingService ratingService;
-    private final CommentService commentService;
     private final AdminService adminService;
 
-    public AdminController(RatingService ratingService, CommentService commentService, AdminService adminService) {
+    public AdminController(RatingService ratingService, AdminService adminService) {
         this.ratingService = ratingService;
-        this.commentService = commentService;
         this.adminService = adminService;
-    }
-
-    @PostMapping("/ratings")
-    public ResponseEntity<RatingDTO> createRating(@RequestBody RatingDTO ratingDTO) {
-        RatingDTO createdRating = ratingService.createRating(ratingDTO);
-        return new ResponseEntity<>(createdRating, HttpStatus.CREATED);
     }
 
     @GetMapping("/sellers/{sellerId}/average-rating")
@@ -37,28 +27,24 @@ public class AdminController {
         return ResponseEntity.ok(averageRating);
     }
 
-    @PatchMapping("/comments/{commentId}/approve")
-    public ResponseEntity<Void> approveComment(
-            @PathVariable Integer commentId,
-            @RequestParam Integer ratingValue
-    ) {
-        commentService.approveComment(commentId, true);
-        RatingDTO ratingDTO = new RatingDTO();
-        ratingDTO.setCommentId(commentId);
-        ratingDTO.setRatingValue(ratingValue);
-        ratingService.createRating(ratingDTO);
-        return ResponseEntity.ok().build();
-    }
-
-    @PatchMapping("/comments/{commentId}/decline")
-    public ResponseEntity<Void> declineComment(@PathVariable Integer commentId) {
-        commentService.approveComment(commentId, false);
-        return ResponseEntity.ok().build();
+    @GetMapping("/comments/pending")
+    public ResponseEntity<List<CommentDTO>> getPendingComments() {
+        List<CommentDTO> pendingComments = adminService.getPendingComments();
+        return ResponseEntity.ok(pendingComments);
     }
 
     @GetMapping("/sellers/pending")
     public ResponseEntity<List<UserDTO>> getPendingSellers() {
         return ResponseEntity.ok(adminService.getPendingSellers());
+    }
+
+    @PatchMapping("/comments/{commentId}/review")
+    public ResponseEntity<Void> reviewComment(
+            @PathVariable Integer commentId,
+            @RequestParam boolean approved,
+            @RequestParam(required = false) Integer ratingValue) {
+        adminService.reviewComment(commentId, approved, ratingValue);
+        return ResponseEntity.ok().build();
     }
 
     @PatchMapping("/sellers/{sellerId}/approve")
