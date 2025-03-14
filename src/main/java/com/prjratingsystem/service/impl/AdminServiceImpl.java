@@ -21,8 +21,8 @@ import java.util.stream.Collectors;
 @Service
 public class AdminServiceImpl implements AdminService {
 
-    private final UserRepository userRepository;
     private final RatingService ratingService;
+    private final UserRepository userRepository;
     private final CommentRepository commentRepository;
 
     public AdminServiceImpl(UserRepository userRepository, RatingService ratingService, CommentRepository commentRepository) {
@@ -48,6 +48,7 @@ public class AdminServiceImpl implements AdminService {
     public void approveSeller(Integer sellerId) {
         User seller = userRepository.findById(sellerId)
                 .orElseThrow(() -> new UserNotFoundException("Seller not found with ID: %d".formatted(sellerId)));
+
         seller.setApproved(true);
         userRepository.save(seller);
     }

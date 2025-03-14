@@ -9,7 +9,6 @@ import com.prjratingsystem.service.EmailService;
 import com.prjratingsystem.service.PasswordResetService;
 import com.prjratingsystem.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,14 +22,12 @@ public class AuthController {
     private final UserService userService;
     private final EmailService emailService;
     private final PasswordResetService passwordResetService;
-    private final RedisTemplate<String, String> redisTemplate;
 
     @Autowired
-    public AuthController(UserService userService, EmailService emailService, PasswordResetService passwordResetService, RedisTemplate<String, String> redisTemplate) {
+    public AuthController(UserService userService, EmailService emailService, PasswordResetService passwordResetService) {
         this.userService = userService;
         this.emailService = emailService;
         this.passwordResetService = passwordResetService;
-        this.redisTemplate = redisTemplate;
     }
 
     @PostMapping("/register")
@@ -42,7 +39,6 @@ public class AuthController {
         String confirmationCode = userService.registerUser(user);
         emailService.sendSellerRegistrationEmail(user.getEmail(), confirmationCode);
 
-
         return ResponseEntity.ok("User registered successfully. Check your email for the confirmation link.");
     }
 
@@ -53,7 +49,7 @@ public class AuthController {
         return ResponseEntity.ok("Email confirmed successfully");
     }
 
-    @PutMapping("/{id}/change-password")
+    @PutMapping("/{id}/change_password")
     public ResponseEntity<String> changePassword(
             @PathVariable Integer id,
             @RequestParam String oldPassword,

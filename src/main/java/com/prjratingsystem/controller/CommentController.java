@@ -23,41 +23,45 @@ public class CommentController {
     }
 
     @PostMapping("/sellers/{sellerId}")
-    @ResponseStatus(HttpStatus.CREATED)
-    public CommentDTO createComment(@PathVariable Integer sellerId, @RequestBody CommentDTO commentDTO) {
-        return commentService.createComment(sellerId, commentDTO);
+    public ResponseEntity<Void> createComment(@PathVariable Integer sellerId, @RequestBody CommentDTO commentDTO) {
+        commentService.createComment(sellerId, commentDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PostMapping("/sellers")
-    @ResponseStatus(HttpStatus.CREATED)
-    public CommentDTO createCommentWithSellerRequest(@RequestBody CommentWithSellerRequestDTO requestDTO) throws UserAlreadyExistsException {
-        return commentService.createCommentWithSellerRequest(requestDTO);
+    public ResponseEntity<Void> createCommentWithSellerRequest(@RequestBody CommentWithSellerRequestDTO requestDTO) throws UserAlreadyExistsException {
+        commentService.createCommentWithSellerRequest(requestDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @GetMapping("/sellers/{sellerId}/comments")
-    public List<CommentDTO> getCommentsBySeller(@PathVariable Integer sellerId) {
-        return commentService.getCommentsBySellerId(sellerId);
+    public ResponseEntity<List<CommentDTO>> getCommentsBySeller(@PathVariable Integer sellerId) {
+        List<CommentDTO> comments = commentService.getCommentsBySellerId(sellerId);
+        return ResponseEntity.ok(comments);
     }
 
     @GetMapping("/{commentId}")
-    public CommentDTO getCommentById(@PathVariable Integer commentId) {
-        return commentService.getCommentById(commentId);
+    public ResponseEntity<CommentDTO> getCommentById(@PathVariable Integer commentId) {
+        CommentDTO comment = commentService.getCommentById(commentId);
+        return ResponseEntity.ok(comment);
     }
 
     @PutMapping("/{commentId}")
-    public CommentDTO updateComment(@PathVariable Integer commentId, @RequestBody CommentDTO commentDTO) {
-        return commentService.updateComment(commentId, commentDTO);
+    public ResponseEntity<Void> updateComment(@PathVariable Integer commentId, @RequestBody CommentDTO commentDTO) {
+        commentService.updateComment(commentId, commentDTO);
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{commentId}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteComment(@PathVariable Integer commentId) {
+    public ResponseEntity<Void> deleteComment(@PathVariable Integer commentId) {
         commentService.deleteComment(commentId);
+        return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/{commentId}/approve")
-    public CommentDTO approveComment(@PathVariable Integer commentId, @RequestParam Boolean approved) {
-        return commentService.approveComment(commentId, approved);
+    public ResponseEntity<Void> approveComment(@PathVariable Integer commentId, @RequestParam Boolean approved) {
+        commentService.approveComment(commentId, approved);
+        return ResponseEntity.ok().build();
     }
 
     @ExceptionHandler(UserNotFoundException.class)
