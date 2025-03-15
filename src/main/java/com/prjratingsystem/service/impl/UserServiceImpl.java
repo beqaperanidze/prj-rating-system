@@ -82,20 +82,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void changePassword(Integer userId, String oldPassword, String newPassword) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("User not found with ID: %d".formatted(userId)));
-
-        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
-            throw new IllegalArgumentException("Incorrect old password");
-        }
-
-        String encodedPassword = passwordEncoder.encode(newPassword);
-        user.setPassword(encodedPassword);
-        userRepository.save(user);
-    }
-
-    @Override
     public UserDTO findUserById(Integer id) {
         User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User not found with ID: %d".formatted(id)));
         UserDTO userDTO = mapToUserDTO(user);

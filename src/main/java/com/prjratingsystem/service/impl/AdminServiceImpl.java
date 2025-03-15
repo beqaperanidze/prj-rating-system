@@ -34,6 +34,7 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public List<UserDTO> getPendingSellers() {
         List<User> pendingSellers = userRepository.findByApprovedFalseAndRole(Role.SELLER);
+
         return pendingSellers.stream()
                 .map(user -> {
                     UserDTO dto = mapToUserDTO(user);

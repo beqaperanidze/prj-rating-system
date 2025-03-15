@@ -49,16 +49,6 @@ public class AuthController {
         return ResponseEntity.ok("Email confirmed successfully");
     }
 
-    @PutMapping("/{id}/change_password")
-    public ResponseEntity<String> changePassword(
-            @PathVariable Integer id,
-            @RequestParam String oldPassword,
-            @RequestParam String newPassword) {
-
-        userService.changePassword(id, oldPassword, newPassword);
-        return ResponseEntity.ok("Password changed successfully");
-    }
-
 
     @PostMapping("/forgot_password")
     public ResponseEntity<?> forgotPassword(@RequestBody Map<String, String> request) {

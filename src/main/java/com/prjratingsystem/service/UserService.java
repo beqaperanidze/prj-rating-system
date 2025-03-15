@@ -85,15 +85,6 @@ public interface UserService {
      */
     void confirmUser(String confirmationCode);
 
-    /**
-     * Changes the password for a user.
-     *
-     * @param userId      The unique identifier of the user
-     * @param oldPassword The current password of the user
-     * @param newPassword The new password to set for the user
-     */
-    void changePassword(Integer userId, String oldPassword, String newPassword);
-
 
     /**
      * Retrieves the top sellers based on a pageable request.
