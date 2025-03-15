@@ -88,7 +88,7 @@ public class AuthController {
     @PostMapping("/reset")
     public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> request) {
         String code = request.get("code");
-        String newPassword = request.get("new_password");
+        String newPassword = request.get("newPassword");
 
         if (code == null || newPassword == null) {
             return ResponseEntity.badRequest().body(Map.of("error", "Code and new password are required"));

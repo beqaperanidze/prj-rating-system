@@ -9,6 +9,7 @@ import com.prjratingsystem.model.Comment;
 import com.prjratingsystem.model.enums.Role;
 import com.prjratingsystem.model.User;
 import com.prjratingsystem.repository.CommentRepository;
+import com.prjratingsystem.repository.RatingRepository;
 import com.prjratingsystem.repository.UserRepository;
 import com.prjratingsystem.service.CommentService;
 import jakarta.transaction.Transactional;
@@ -22,10 +23,12 @@ public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
+    private final RatingRepository ratingRepository;
 
-    public CommentServiceImpl(CommentRepository commentRepository, UserRepository userRepository) {
+    public CommentServiceImpl(CommentRepository commentRepository, UserRepository userRepository, RatingRepository ratingRepository) {
         this.commentRepository = commentRepository;
         this.userRepository = userRepository;
+        this.ratingRepository = ratingRepository;
     }
 
 
@@ -105,6 +108,7 @@ public class CommentServiceImpl implements CommentService {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentNotFoundException("Comment not found with ID: %d".formatted(commentId)));
 
+        ratingRepository.deleteAllByCommentId(commentId);
         commentRepository.delete(comment);
     }
 

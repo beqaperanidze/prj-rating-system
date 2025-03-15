@@ -1,16 +1,37 @@
-## Phase 1: Database Setup
-- Design database schema: 2h
-- Set up PostgreSQL and configure connection: 2h
-- Create entities and repositories: 4h
-- **Total: 8h**
+Phase 1: Database Setup
+    Design database schema: 2h
+    Set up PostgreSQL and configure connection: 2h
+    Create entities and repositories: 4h
+    Implement Ratings Table and relation: 2h
+    Total: 10h
 
-## Phase 2: User Registration and Authentication
-- Implement user registration with email confirmation: 6h
-- Implement login and logout functionality: 4h
-- Implement password reset functionality: 4h
-- **Total: 14h**
+Phase 2: User Registration and Authentication
+    Implement user registration with email confirmation: 6h
+    Implement login and logout functionality: 4h
+    Implement password reset functionality: 4h
+    Implement security configurations: 2h
+    Total: 16h
 
-## Phase 3: Seller Profile Management
-- Implement Seller profile creation and approval by Admin: 6h
-- Implement Seller profile editing and deletion: 4h
-- **Total: 10h**
+Phase 3: Seller Profile Management
+    Implement Seller profile creation and approval by Admin: 6h
+    Implement Seller profile editing and deletion: 4h
+    Implement Top Sellers logic: 3h
+    Implement Seller Filtering Logic: 3h
+    Total: 16h
+
+Phase 4: Comment and Rating System
+    Implement comment submission and approval: 6h
+    Implement rating calculation and display: 4h
+    Implement Comment editing and deletion: 3h
+    Implement Comment creation with seller request: 3h
+    Total: 16h
+
+Phase 5: Game Object Management
+    Implement game object creation, editing, and deletion: 6h
+    Implement game object listing by user: 2h
+    Total: 8h
+
+Phase 6: Testing
+    Write unit tests for services: 8h
+    Write integration tests for controllers: 6h
+    Total: 14h
