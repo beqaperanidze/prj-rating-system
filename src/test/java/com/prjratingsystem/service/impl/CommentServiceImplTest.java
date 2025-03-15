@@ -8,6 +8,7 @@ import com.prjratingsystem.exception.UserNotFoundException;
 import com.prjratingsystem.model.Comment;
 import com.prjratingsystem.model.User;
 import com.prjratingsystem.repository.CommentRepository;
+import com.prjratingsystem.repository.RatingRepository;
 import com.prjratingsystem.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,6 +32,9 @@ class CommentServiceImplTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private RatingRepository ratingRepository;
 
     @InjectMocks
     private CommentServiceImpl commentService;

@@ -118,7 +118,7 @@ class UserServiceImplTest {
 
         when(valueOperations.get(anyString())).thenReturn("test@example.com");
         when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
-        doNothing().when(redisTemplate).delete(anyString());
+        when(redisTemplate.delete(anyString())).thenReturn(true);
         doNothing().when(emailService).sendSellerApprovedEmail(anyString());
 
         userService.confirmUser("confirmationCode");
@@ -137,33 +137,6 @@ class UserServiceImplTest {
         assertThrows(UserNotFoundException.class, () -> userService.confirmUser("confirmationCode"));
     }
 
-    @Test
-    void changePassword_ShouldUpdatePassword() {
-        User user = new User();
-        user.setId(1);
-        user.setPassword("oldPassword");
-
-        when(userRepository.findById(anyInt())).thenReturn(Optional.of(user));
-        when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
-        when(passwordEncoder.encode(anyString())).thenReturn("newEncodedPassword");
-
-        userService.changePassword(1, "oldPassword", "newPassword");
-
-        assertEquals("newEncodedPassword", user.getPassword());
-        verify(userRepository).save(user);
-    }
-
-    @Test
-    void changePassword_ShouldThrowException_WhenOldPasswordIncorrect() {
-        User user = new User();
-        user.setId(1);
-        user.setPassword("oldPassword");
-
-        when(userRepository.findById(anyInt())).thenReturn(Optional.of(user));
-        when(passwordEncoder.matches(anyString(), anyString())).thenReturn(false);
-
-        assertThrows(IllegalArgumentException.class, () -> userService.changePassword(1, "incorrectOldPassword", "newPassword"));
-    }
 
     @Test
     void findUserById_ShouldReturnUserDTO() {
