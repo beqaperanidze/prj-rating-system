@@ -34,6 +34,8 @@ dependencies {
     implementation 'org.hibernate.validator:hibernate-validator:8.0.1.Final'
     implementation 'jakarta.validation:jakarta.validation-api:3.0.2'
 
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-cloud-connectors', version: '2.2.13.RELEASE'
+
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'org.postgresql:postgresql'
     annotationProcessor 'org.projectlombok:lombok'

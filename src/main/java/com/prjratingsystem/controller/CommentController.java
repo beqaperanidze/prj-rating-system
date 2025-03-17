@@ -2,9 +2,7 @@ package com.prjratingsystem.controller;
 
 import com.prjratingsystem.dto.CommentDTO;
 import com.prjratingsystem.dto.CommentWithSellerRequestDTO;
-import com.prjratingsystem.exception.CommentNotFoundException;
 import com.prjratingsystem.exception.UserAlreadyExistsException;
-import com.prjratingsystem.exception.UserNotFoundException;
 import com.prjratingsystem.service.CommentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -62,15 +60,5 @@ public class CommentController {
     public ResponseEntity<Void> approveComment(@PathVariable Integer commentId, @RequestParam Boolean approved) {
         commentService.approveComment(commentId, approved);
         return ResponseEntity.ok().build();
-    }
-
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<String> handleUserNotFoundException(UserNotFoundException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
-    }
-
-    @ExceptionHandler(CommentNotFoundException.class)
-    public ResponseEntity<String> handleCommentNotFoundException(CommentNotFoundException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 }

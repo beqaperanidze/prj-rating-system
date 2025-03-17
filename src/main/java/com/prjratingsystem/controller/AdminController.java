@@ -2,11 +2,8 @@ package com.prjratingsystem.controller;
 
 import com.prjratingsystem.dto.UserDTO;
 import com.prjratingsystem.dto.CommentDTO;
-import com.prjratingsystem.exception.CommentNotFoundException;
-import com.prjratingsystem.exception.UserNotFoundException;
 import com.prjratingsystem.service.AdminService;
 import com.prjratingsystem.service.RatingService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -60,15 +57,5 @@ public class AdminController {
     public ResponseEntity<Void> declineSeller(@PathVariable Integer sellerId) {
         adminService.declineSeller(sellerId);
         return ResponseEntity.ok().build();
-    }
-
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<String> handleUserNotFoundException(UserNotFoundException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
-    }
-
-    @ExceptionHandler(CommentNotFoundException.class)
-    public ResponseEntity<String> handleCommentNotFoundException(CommentNotFoundException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 }
