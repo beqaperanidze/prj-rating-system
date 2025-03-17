@@ -43,7 +43,7 @@ This is a Spring Boot REST API for managing user ratings, comments, game objects
 
 ### Installation
 
-1.  Clone the repository: `git clone <repository_url>`
+1.  Clone the repository: `git clone https://github.com/beqaperanidze/prj-rating-system`
 2.  Build the project: `./gradlew build`
 3.  Configure `application.properties` or `application.yml` with your database and Redis connection details.
 
