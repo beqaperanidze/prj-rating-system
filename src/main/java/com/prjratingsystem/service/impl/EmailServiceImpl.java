@@ -12,7 +12,7 @@ public class EmailServiceImpl implements EmailService {
 
     private final JavaMailSender mailSender;
 
-    @Value("bekasratingsystem@gmail.com")
+    @Value("${spring.mail.username}")
     private String fromEmail;
 
     @Autowired
