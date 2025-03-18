@@ -30,19 +30,32 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain chain)
             throws ServletException, IOException {
 
-        String token = request.getHeader("Authorization");
-        if (token != null && token.startsWith("Bearer ")) {
-            token = token.substring(7);
-            String email = jwtUtil.extractUsername(token);
+        String authHeader = request.getHeader("Authorization");
+        String token = null;
 
-            if (email != null && jwtUtil.validateToken(token)) {
-                UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-                UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        if (authHeader != null) {
+            if (authHeader.startsWith("Bearer ")) {
+                token = authHeader.substring(7).trim();
+            } else if (authHeader.toLowerCase().startsWith("bearer")) {
+                token = authHeader.substring(6).trim();
+            }
 
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+            if (token != null && !token.isEmpty()) {
+                try {
+                    String email = jwtUtil.extractUsername(token);
+                    if (email != null && jwtUtil.validateToken(token)) {
+                        UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+                        UsernamePasswordAuthenticationToken authentication =
+                                new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                    }
+                } catch (Exception e) {
+                    System.out.printf("Error processing token: %s%n", e.getMessage());
+                }
             }
         }
+
         chain.doFilter(request, response);
     }
 }
