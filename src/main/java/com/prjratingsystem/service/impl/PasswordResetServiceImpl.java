@@ -1,5 +1,6 @@
 package com.prjratingsystem.service.impl;
 
+import com.prjratingsystem.exception.UserNotFoundException;
 import com.prjratingsystem.model.User;
 import com.prjratingsystem.repository.UserRepository;
 import com.prjratingsystem.service.EmailService;
@@ -14,14 +15,13 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 public class PasswordResetServiceImpl implements PasswordResetService {
+    private static final String RESET_CODE_PREFIX = "password_reset:";
+    private static final long RESET_CODE_EXPIRATION = 30;
 
     private final UserRepository userRepository;
     private final EmailService emailService;
     private final RedisTemplate<String, String> redisTemplate;
     private final PasswordEncoder passwordEncoder;
-
-    private static final String RESET_CODE_PREFIX = "password_reset:";
-    private static final long RESET_CODE_EXPIRATION = 30;
 
     @Autowired
     public PasswordResetServiceImpl(
@@ -37,8 +37,8 @@ public class PasswordResetServiceImpl implements PasswordResetService {
 
     @Override
     public void generateResetCode(String email) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found with email: %s".formatted(email)));
+        userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User not found with email: %s".formatted(email)));
 
         String resetCode = UUID.randomUUID().toString().substring(0, 8);
 
@@ -64,7 +64,7 @@ public class PasswordResetServiceImpl implements PasswordResetService {
         String email = redisTemplate.opsForValue().get(key);
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found with email: %s".formatted(email)));
+                .orElseThrow(() -> new UserNotFoundException("User not found with email: %s".formatted(email)));
 
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
