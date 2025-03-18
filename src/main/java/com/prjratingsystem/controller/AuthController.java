@@ -3,27 +3,57 @@ package com.prjratingsystem.controller;
 import java.util.Map;
 
 import com.prjratingsystem.model.User;
+import com.prjratingsystem.repository.UserRepository;
+import com.prjratingsystem.security.JwtUtil;
 import com.prjratingsystem.service.EmailService;
 import com.prjratingsystem.service.PasswordResetService;
 import com.prjratingsystem.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
 
+    private final UserRepository userRepository;
     private final UserService userService;
     private final EmailService emailService;
     private final PasswordResetService passwordResetService;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
     @Autowired
-    public AuthController(UserService userService, EmailService emailService, PasswordResetService passwordResetService) {
+    public AuthController(UserRepository userRepository, UserService userService, EmailService emailService, PasswordResetService passwordResetService, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
+        this.userRepository = userRepository;
         this.userService = userService;
         this.emailService = emailService;
         this.passwordResetService = passwordResetService;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtUtil = jwtUtil;
     }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
+        String password = request.get("password");
+
+        User user = userRepository.findByEmail(email)
+                .orElse(null);
+
+        if (user == null || !passwordEncoder.matches(password, user.getPassword())) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Invalid credentials"));
+        }
+
+        if (!user.getApproved()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Your account is not approved"));
+        }
+
+        String token = jwtUtil.generateToken(email);
+        return ResponseEntity.ok(Map.of("token", token));
+    }
+
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody User user) {

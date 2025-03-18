@@ -1,6 +1,7 @@
 package com.prjratingsystem.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.JsonPath;
 import com.prjratingsystem.dto.CommentDTO;
 import com.prjratingsystem.dto.GameObjectDTO;
 import com.prjratingsystem.model.Comment;
@@ -22,6 +23,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -103,10 +105,10 @@ public class RatingSystemIntegrationTests {
     @Test
     void testUserRegistrationAndLogin() throws Exception {
         Map<String, Object> registrationData = new HashMap<>();
-        registrationData.put("email", "newuser@test.com");
-        registrationData.put("password", "password123");
-        registrationData.put("firstName", "New");
-        registrationData.put("lastName", "User");
+        registrationData.put("email", "testuserjwt@test.com");
+        registrationData.put("password", "securepassword");
+        registrationData.put("firstName", "Test");
+        registrationData.put("lastName", "UserJwt");
 
         mockMvc.perform(post("/api/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -114,19 +116,36 @@ public class RatingSystemIntegrationTests {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", notNullValue()));
 
-        User newUser = userRepository.findByEmail("newuser@test.com").orElse(null);
+        User newUser = userRepository.findByEmail("testuserjwt@test.com").orElse(null);
         assertNotNull(newUser);
         assertFalse(newUser.getApproved());
 
-        Map<String, String> loginData = new HashMap<>();
-        loginData.put("username", "newuser@test.com");
-        loginData.put("password", "password123");
+        newUser.setApproved(true);
+        userRepository.save(newUser);
 
-        mockMvc.perform(post("/api/auth/login")
-                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                        .param("username", "newuser@test.com")
-                        .param("password", "password123"))
-                .andExpect(status().is3xxRedirection());
+        Map<String, String> loginData = new HashMap<>();
+        loginData.put("email", "testuserjwt@test.com");
+        loginData.put("password", "securepassword");
+
+        MvcResult loginResult = mockMvc.perform(post("/api/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(loginData)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.token", notNullValue()))
+                .andReturn();
+
+        String token = JsonPath.read(loginResult.getResponse().getContentAsString(), "$.token");
+        assertNotNull(token);
+        assertTrue(token.startsWith("eyJ"));
+
+        // Retrieve the ID of the newly registered user
+        User loggedInUser = userRepository.findByEmail("testuserjwt@test.com").orElse(null);
+        assertNotNull(loggedInUser);
+        Integer userId = loggedInUser.getId();
+
+        mockMvc.perform(get("/api/users/%d".formatted(userId))
+                        .header("Authorization", "Bearer %s".formatted(token)))
+                .andExpect(status().isOk());
     }
 
     @Test
