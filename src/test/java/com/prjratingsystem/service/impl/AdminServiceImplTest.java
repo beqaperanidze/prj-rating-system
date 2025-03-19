@@ -58,7 +58,7 @@ class AdminServiceImplTest {
 
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals(4.5, result.getFirst().getAverageRating());
+        assertEquals(4.5, result.get(0).getAverageRating());
     }
 
     @Test
@@ -118,7 +118,7 @@ class AdminServiceImplTest {
 
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals(1, result.getFirst().getId());
+        assertEquals(1, result.get(0).getId());
     }
 
     @Test

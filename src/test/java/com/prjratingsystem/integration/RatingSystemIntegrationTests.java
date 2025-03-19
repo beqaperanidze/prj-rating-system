@@ -161,7 +161,7 @@ public class RatingSystemIntegrationTests {
                 .andExpect(status().isCreated());
 
         assertEquals(1, commentRepository.count());
-        Comment comment = commentRepository.findAll().getFirst();
+        Comment comment = commentRepository.findAll().get(0);
         assertFalse(comment.getApproved());
 
         Integer commentId = comment.getId();
