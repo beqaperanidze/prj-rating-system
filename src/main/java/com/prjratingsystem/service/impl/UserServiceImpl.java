@@ -20,11 +20,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -47,21 +45,6 @@ public class UserServiceImpl implements UserService {
         this.redisTemplate = redisTemplate;
         this.gameObjectRepository = gameObjectRepository;
         this.emailService = emailService;
-    }
-
-    @Override
-    @Transactional
-    public String registerUser(User user) {
-        String encodedPassword = passwordEncoder.encode(user.getPassword());
-        user.setPassword(encodedPassword);
-        user.setRole(Role.SELLER);
-        user.setApproved(false);
-
-        String confirmationCode = UUID.randomUUID().toString();
-        redisTemplate.opsForValue().set(confirmationCode, user.getEmail(), Duration.ofHours(24));
-
-        userRepository.save(user);
-        return confirmationCode;
     }
 
     @Override

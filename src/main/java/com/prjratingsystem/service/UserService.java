@@ -10,13 +10,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface UserService {
-    /**
-     * Registers a new user in the system.
-     *
-     * @param user The user entity to register
-     * @return The registered user entity
-     */
-    String registerUser(User user);
+
 
     /**
      * Finds a user by their unique identifier.

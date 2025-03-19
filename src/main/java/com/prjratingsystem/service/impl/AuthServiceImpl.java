@@ -1,38 +1,42 @@
 package com.prjratingsystem.service.impl;
 
 import com.prjratingsystem.model.User;
+import com.prjratingsystem.model.enums.Role;
 import com.prjratingsystem.repository.UserRepository;
 import com.prjratingsystem.security.JwtUtil;
 import com.prjratingsystem.service.AuthService;
-import com.prjratingsystem.service.EmailService;
 import com.prjratingsystem.service.PasswordResetService;
 import com.prjratingsystem.service.UserService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
     private final UserService userService;
-    private final EmailService emailService;
     private final PasswordResetService passwordResetService;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final RedisTemplate<String, String> redisTemplate;
 
     @Autowired
-    public AuthServiceImpl(UserRepository userRepository, UserService userService, EmailService emailService,
-                           PasswordResetService passwordResetService, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
+    public AuthServiceImpl(UserRepository userRepository, UserService userService,
+                           PasswordResetService passwordResetService, PasswordEncoder passwordEncoder, JwtUtil jwtUtil, RedisTemplate<String, String> redisTemplate) {
         this.userRepository = userRepository;
         this.userService = userService;
-        this.emailService = emailService;
         this.passwordResetService = passwordResetService;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
+        this.redisTemplate = redisTemplate;
     }
 
     @Override
@@ -51,32 +55,24 @@ public class AuthServiceImpl implements AuthService {
         }
 
         String token = jwtUtil.generateToken(email);
+
+
         return ResponseEntity.ok(Map.of("token", token));
     }
 
-    @Override
-    public ResponseEntity<String> register(Map<String, String> request) {
-        String email = request.get("email");
-        String password = request.get("password");
-        String firstName = request.get("firstName");
-        String lastName = request.get("lastName");
-
-
-        if (userService.findByEmail(email) != null) {
-            return ResponseEntity.badRequest().body("Email already exists");
-        }
-
-        User user = new User();
-        user.setEmail(email);
-        user.setPassword(passwordEncoder.encode(password));
-        user.setFirstName(firstName);
-        user.setLastName(lastName);
+    @Transactional
+    public ResponseEntity<String> registerUser(User user) {
+        String encodedPassword = passwordEncoder.encode(user.getPassword());
+        user.setPassword(encodedPassword);
+        user.setRole(Role.SELLER);
         user.setApproved(false);
 
-        String confirmationCode = userService.registerUser(user);
-        emailService.sendSellerRegistrationEmail(email, confirmationCode);
+        String confirmationCode = UUID.randomUUID().toString();
+        redisTemplate.opsForValue().set(confirmationCode, user.getEmail(), Duration.ofHours(24));
 
+        userRepository.save(user);
         return ResponseEntity.ok("User registered successfully. Check your email for the confirmation link.");
+
     }
 
     @Override

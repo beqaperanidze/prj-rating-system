@@ -1,5 +1,6 @@
 package com.prjratingsystem.controller;
 
+import com.prjratingsystem.model.User;
 import com.prjratingsystem.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,8 +25,8 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody Map<String, String> user) {
-        return authService.register(user);
+    public ResponseEntity<String> register(@RequestBody User user) {
+        return authService.registerUser(user);
     }
 
     @GetMapping("/confirm")

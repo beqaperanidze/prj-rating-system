@@ -1,5 +1,6 @@
 package com.prjratingsystem.service;
 
+import com.prjratingsystem.model.User;
 import org.springframework.http.ResponseEntity;
 
 import java.util.Map;
@@ -7,7 +8,7 @@ import java.util.Map;
 public interface AuthService {
     ResponseEntity<?> login(Map<String, String> request);
 
-    ResponseEntity<String> register(Map<String, String> request);
+    ResponseEntity<String> registerUser(User user);
 
     ResponseEntity<String> confirmUser(String code);
 

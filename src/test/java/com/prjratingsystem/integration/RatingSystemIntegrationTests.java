@@ -1,6 +1,7 @@
 package com.prjratingsystem.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.JsonPath;
 import com.prjratingsystem.dto.CommentDTO;
 import com.prjratingsystem.dto.GameObjectDTO;
 import com.prjratingsystem.model.Comment;
@@ -22,6 +23,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -111,7 +113,7 @@ public class RatingSystemIntegrationTests {
         mockMvc.perform(post("/api/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(registrationData)))
-                .andExpect(status().isCreated());
+                .andExpect(status().isOk());
 
         User newUser = userRepository.findByEmail("testuserjwt@test.com").orElse(null);
         assertNotNull(newUser);
@@ -120,20 +122,31 @@ public class RatingSystemIntegrationTests {
         newUser.setApproved(true);
         userRepository.save(newUser);
 
+        User approvedUser = userRepository.findByEmail("testuserjwt@test.com").orElse(null);
+        assertNotNull(approvedUser);
+        assertTrue(approvedUser.getApproved(), "User should be approved before login");
+
         Map<String, String> loginData = new HashMap<>();
         loginData.put("email", "testuserjwt@test.com");
         loginData.put("password", "securepassword");
 
-        mockMvc.perform(post("/api/auth/login")
+        MvcResult loginResult = mockMvc.perform(post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(loginData)))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.token").exists())
+                .andReturn();
+
+        String token = JsonPath.read(loginResult.getResponse().getContentAsString(), "$.token");
+        assertNotNull(token);
+        assertTrue(token.startsWith("eyJ"), "Token should be a valid JWT");
 
         User loggedInUser = userRepository.findByEmail("testuserjwt@test.com").orElse(null);
         assertNotNull(loggedInUser);
         Integer userId = loggedInUser.getId();
 
-        mockMvc.perform(get("/api/users/%d".formatted(userId)))
+        mockMvc.perform(get("/api/users/{id}", userId)
+                        .header("Authorization", "Bearer %s".formatted(token)))
                 .andExpect(status().isOk());
     }
 

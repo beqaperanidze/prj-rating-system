@@ -22,9 +22,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -50,8 +48,6 @@ class UserServiceImplTest {
     @Mock
     private RatingService ratingService;
 
-    @Mock
-    private PasswordEncoder passwordEncoder;
 
     @Mock
     private RedisTemplate<String, String> redisTemplate;
@@ -69,24 +65,6 @@ class UserServiceImplTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
         when(redisTemplate.opsForValue()).thenReturn(valueOperations);
-    }
-
-    @Test
-    void registerUser_ShouldReturnConfirmationCode() {
-        User user = new User();
-        user.setPassword("password");
-        user.setEmail("test@example.com");
-
-        when(passwordEncoder.encode(anyString())).thenReturn("encodedPassword");
-        when(userRepository.save(any(User.class))).thenReturn(user);
-
-        doNothing().when(valueOperations).set(anyString(), anyString(), any(Duration.class));
-
-        String confirmationCode = userService.registerUser(user);
-
-        assertNotNull(confirmationCode);
-        verify(valueOperations).set(anyString(), eq("test@example.com"), eq(Duration.ofHours(24)));
-        verify(userRepository).save(user);
     }
 
     @Test
