@@ -3,13 +3,13 @@ applications:
   - name: my-spring-app
     memory: 1G
     instances: 1
-    path: build\libs\prj-rating-system-0.0.1-SNAPSHOT.jar
+    path: build/libs/prj-rating-system-0.0.1-SNAPSHOT.jar
     buildpacks:
-      - sap_java_buildpack
+      - java_buildpack
     services:
       - postgres-db-service
       - redis-service
     env:
       JBP_CONFIG_SPRING_AUTO_RECONFIGURATION: '{enabled: false}'
       SPRING_PROFILES_ACTIVE: cloud
-      JBP_CONFIG_SAPJVM: '{version: 17.0.+}'
+      JBP_CONFIG_OPEN_JDK_JRE: '{ jre: { version: 17.+ } }'
