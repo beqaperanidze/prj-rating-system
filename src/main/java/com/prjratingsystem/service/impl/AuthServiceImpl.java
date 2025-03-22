@@ -5,6 +5,7 @@ import com.prjratingsystem.model.enums.Role;
 import com.prjratingsystem.repository.UserRepository;
 import com.prjratingsystem.security.JwtUtil;
 import com.prjratingsystem.service.AuthService;
+import com.prjratingsystem.service.EmailService;
 import com.prjratingsystem.service.PasswordResetService;
 import com.prjratingsystem.service.UserService;
 import jakarta.transaction.Transactional;
@@ -23,16 +24,18 @@ public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
     private final UserService userService;
+    private final EmailService emailService;
     private final PasswordResetService passwordResetService;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final RedisTemplate<String, String> redisTemplate;
 
     @Autowired
-    public AuthServiceImpl(UserRepository userRepository, UserService userService,
+    public AuthServiceImpl(UserRepository userRepository, UserService userService, EmailService emailService,
                            PasswordResetService passwordResetService, PasswordEncoder passwordEncoder, JwtUtil jwtUtil, RedisTemplate<String, String> redisTemplate) {
         this.userRepository = userRepository;
         this.userService = userService;
+        this.emailService = emailService;
         this.passwordResetService = passwordResetService;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
@@ -56,7 +59,6 @@ public class AuthServiceImpl implements AuthService {
 
         String token = jwtUtil.generateToken(email);
 
-
         return ResponseEntity.ok(Map.of("token", token));
     }
 
@@ -69,10 +71,10 @@ public class AuthServiceImpl implements AuthService {
 
         String confirmationCode = UUID.randomUUID().toString();
         redisTemplate.opsForValue().set(confirmationCode, user.getEmail(), Duration.ofHours(24));
+        emailService.sendSellerRegistrationEmail(user.getEmail(), confirmationCode);
 
         userRepository.save(user);
         return ResponseEntity.ok("User registered successfully. Check your email for the confirmation link.");
-
     }
 
     @Override
